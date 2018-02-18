@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity(), MainActivityContract {
     }
 
     override fun loading() {
-        if (!progress.isShowing)
+        if (!::progress.isInitialized || !progress.isShowing)
             progress = ProgressDialog.show(this@MainActivity,"Loading",
                     "Please wait...",true,false)
     }

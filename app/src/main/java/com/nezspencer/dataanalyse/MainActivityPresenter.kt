@@ -6,8 +6,9 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
 import okhttp3.ResponseBody
+import retrofit2.Response
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 
@@ -20,17 +21,17 @@ class MainActivityPresenter(contract: MainActivityContract, baseUrl: String) {
 
     private fun prepareRetrofit(): Retrofit = Retrofit.Builder().baseUrl(url)
             .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
 
     fun fetchWordList(){
         mainContract.loading()
         prepareRetrofit().create(Api::class.java)
-                .fetchWords()
+                .fetchWords(5)
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object: DisposableSingleObserver<ResponseBody>(){
-                    override fun onSuccess(t: ResponseBody) {
+                .subscribe(object: DisposableSingleObserver<Response<Void>>(){
+                    override fun onSuccess(t: Response<Void>) {
                         mainContract.hideLoading()
                         //todo pass the hashmap to mainCOntract.onSuccess()
                     }
